@@ -347,7 +347,7 @@ fn main() {
                                 let image_index = usize!(ui_state.y * ui_state.image.width + ui_state.x);
                                 ui_state.image.pixels[image_index] = Some(false);
                             },
-                            Keycode::Delete => {
+                            Keycode::Backspace|Keycode::Delete => {
                                 // set current pixel to null
                                 let image_index = usize!(ui_state.y * ui_state.image.width + ui_state.x);
                                 ui_state.image.pixels[image_index] = None;
