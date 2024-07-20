@@ -306,8 +306,8 @@ fn main() {
                             Keycode::Escape => break 'running,
                             Keycode::R => ui_state.going_right = !ui_state.going_right,
                             Keycode::X => ui_state.setting_mode = !ui_state.setting_mode,
-                            Keycode::S => {
-                                // save the current image
+                            Keycode::S|Keycode::W => {
+                                // save/write the current image
                                 let f = File::create(image_filename)
                                     .expect("failed to create image file");
                                 serde_json::to_writer_pretty(f, &ui_state.image)
