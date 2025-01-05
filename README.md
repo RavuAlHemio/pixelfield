@@ -8,11 +8,9 @@ Uses an embarrassingly trivial JSON-based file format for save-and-restore purpo
 
 The top left corner contains a zoomed-in view of the part of the image currently being modified.
 
-The top right corner contains the color currently being used to paint.
+The top right corner contains the color currently being used to paint as well as the active direction.
 
 The bottom right corner contains a view of the full image.
-
-There is currently no indicator for the active direction. (Sorry!)
 
 ## Controls
 

@@ -6,7 +6,7 @@ use clap::Parser;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
-use sdl2::rect::Rect;
+use sdl2::rect::{Point, Rect};
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 use serde::{Deserialize, Serialize};
@@ -87,6 +87,7 @@ const COLOR_NONE: Color = Color::RGB(0x7F, 0x7F, 0x7F);
 const COLOR_CURSOR: Color = Color::RGB(0xFF, 0x00, 0x00);
 const COLOR_PREVIEW_FRAME: Color = Color::RGB(0x00, 0x00, 0xFF);
 const COLOR_FULL_FRAME: Color = Color::RGB(0x33, 0x33, 0x33);
+const COLOR_DIRECTION_ARROW: Color = Color::RGB(0x00, 0xCC, 0x00);
 
 
 macro_rules! u32 { ($val:expr) => (u32::try_from($val).unwrap()); }
@@ -197,7 +198,6 @@ fn render(canvas: &mut Canvas<Window>, ui_state: &UiState) {
         image_cursor_size,
     )).expect("failed to draw rectangle");
 
-
     // paint the current color in the top right
     const CURRENT_COLOR_PIXEL_SCALE: u32 = 16;
     const CURRENT_COLOR_BORDER_OFFSET: u32 = 4;
@@ -210,6 +210,51 @@ fn render(canvas: &mut Canvas<Window>, ui_state: &UiState) {
         CURRENT_COLOR_PIXEL_SCALE,
         CURRENT_COLOR_PIXEL_SCALE,
     )).expect("failed to draw current color");
+
+    // paint the direction
+    const DIRECTION_OFFSET_TOP: u32 = 20;
+    const DIRECTION_OFFSET_RIGHT: u32 = 4;
+    const DIRECTION_SIZE: u32 = 16;
+    canvas.set_draw_color(COLOR_DIRECTION_ARROW);
+    // horizontal line
+    canvas.draw_line(
+        Point::new(
+            (canvas_width - (DIRECTION_OFFSET_RIGHT + DIRECTION_SIZE)).try_into().unwrap(),
+            (DIRECTION_OFFSET_TOP + (DIRECTION_SIZE / 2)).try_into().unwrap(),
+        ),
+        Point::new(
+            (canvas_width - DIRECTION_OFFSET_RIGHT).try_into().unwrap(),
+            (DIRECTION_OFFSET_TOP + (DIRECTION_SIZE / 2)).try_into().unwrap(),
+        ),
+    ).expect("failed to draw direction arrow horizontal line");
+
+    let arrow_tip_start_x = if ui_state.going_right {
+        canvas_width - DIRECTION_OFFSET_RIGHT
+    } else {
+        canvas_width - (DIRECTION_OFFSET_RIGHT + DIRECTION_SIZE)
+    };
+    // top line
+    canvas.draw_line(
+        Point::new(
+            arrow_tip_start_x.try_into().unwrap(),
+            (DIRECTION_OFFSET_TOP + (DIRECTION_SIZE / 2)).try_into().unwrap(),
+        ),
+        Point::new(
+            (canvas_width - (DIRECTION_OFFSET_RIGHT + (DIRECTION_SIZE / 2))).try_into().unwrap(),
+            DIRECTION_OFFSET_TOP.try_into().unwrap(),
+        ),
+    ).expect("failed to draw direction arrow top line");
+    // bottom line
+    canvas.draw_line(
+        Point::new(
+            arrow_tip_start_x.try_into().unwrap(),
+            (DIRECTION_OFFSET_TOP + (DIRECTION_SIZE / 2)).try_into().unwrap(),
+        ),
+        Point::new(
+            (canvas_width - (DIRECTION_OFFSET_RIGHT + (DIRECTION_SIZE / 2))).try_into().unwrap(),
+            (DIRECTION_OFFSET_TOP + DIRECTION_SIZE).try_into().unwrap(),
+        ),
+    ).expect("failed to draw direction arrow top line");
 
     canvas.present();
 }
